@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: |cffeda55fPartyBot|r Control Panel
+## Notes: PartyBot Control Panel for SoloCraft server.
+## Notes-zhCN: PartyBot Control Panel for the SoloCraft server.
+## Author: Leontiesh (Edited by Solo for SoloCraft.org) (Buggs Fixed By Pumpan)
+## DefaultState: Enabled
+## Version: 1.2.1
+
+PCP.lua
+PCP.xml
