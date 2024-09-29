@@ -9,6 +9,8 @@
 ### PCP Client 1.14 Addon Fix
 
 **This is a fix for the WoW client 1.14.**
+### Download 
+**Press Code > Download zip**
 ### Install 
 **Extract and Remove -main from the folder name**
 ### Changelog
