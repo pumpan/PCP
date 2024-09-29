@@ -1,62 +1,193 @@
 local version, build, date, tocversion = GetBuildInfo()
-local isVanilla = string.find(version, "^1.12")
 
+function PCPFrame_OnLoad(self)
+    -- Output the game version for debugging
+    if string.find(version, "^1.12") then
+        DEFAULT_CHAT_FRAME:AddMessage("Running on WoW Vanilla: " .. version)
+        
+        -- Use 'this' for 1.12.x (Vanilla)
+        this:SetMovable(true)
+        this:SetUserPlaced(true)
+        this:EnableMouse(true)
+        this:RegisterForDrag("LeftButton")
 
--- Function to handle mouse enter event
-function PCPButtonFrame_OnEnter(self)
-    local frame = self or this  -- Use 'self' for 1.14+ or 'this' for 1.12.x
-    GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
-    GameTooltip:SetText("My Button Tooltip", 1, 1, 1)
-    GameTooltip:Show()
-end
+        -- Dragging behavior for 1.12.x
+        this:SetScript("OnDragStart", function()
+            this:StartMoving()
+        end)
 
--- Function to handle dragging the frame
-function PCPButtonFrame_BeingDragged()
-    local frame = PCPButtonFrame
-    local cursorX, cursorY = GetCursorPosition()
-    local scale = UIParent:GetEffectiveScale()
-    frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", cursorX / scale, cursorY / scale)
-end
-
--- Function to handle PLAYER_LOGIN event
-local function OnPlayerLogin(self, event)
-		local frame = self or this  -- Use 'self' for 1.14+ or 'this' for 1.12.x upcoming feature
-		if isVanilla then
-			print("Client:" .. version)
-
-		else
-			print("Client:" .. version)
-		end
-
-    PCPButtonFrame:Show()
-end
-
--- Create a frame for handling events
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_LOGIN")
-
--- Set up the OnEvent script
-frame:SetScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_LOGIN" then
-        OnPlayerLogin(self, event)
-    end
-end)
-
--- OnLoad function for PCPFrame (to be called from XML)
-function PCPFrame_OnLoad()
-    PCPFrame:RegisterForDrag("LeftButton")
-    PCPFrame:Hide()  -- Initially hide the frame
-
-    -- Register the PLAYER_LOGIN event
-    if isVanilla then
-        this:RegisterEvent("PLAYER_LOGIN")  -- 'this' for Vanilla
+        this:SetScript("OnDragStop", function()
+            this:StopMovingOrSizing()
+        end)
+		PCPFrame:Hide()
     else
-        self:RegisterEvent("PLAYER_LOGIN")  -- 'self' for Classic Era
+        -- Code for WoW Classic Era (1.14+)
+        DEFAULT_CHAT_FRAME:AddMessage("Running on WoW Classic: " .. version)
+        
+        -- Use 'self' for 1.14+
+        self:SetMovable(true)
+        self:SetUserPlaced(true)
+        self:EnableMouse(true)
+        self:RegisterForDrag("LeftButton")
+
+        -- Dragging behavior for 1.14+
+        self:SetScript("OnDragStart", function()
+            self:StartMoving()
+        end)
+
+        self:SetScript("OnDragStop", function()
+            self:StopMovingOrSizing()
+        end)
     end
 end
 
 
--- Addon by Leontiesh (Ace) (Edited by Solo for SoloCraft.org) 
+
+
+
+
+------------------------------------------------------------------------
+-- Create the PCPButtonFrame if it doesn't already exist
+if not PCPButtonFrame then
+    -- Create the PCPButtonFrame (it acts as both frame and button
+    if string.find(version, "^1.14") then
+		PCPButtonFrame = CreateFrame("Button", "PCPButtonFrame", Minimap, "BackdropTemplate")	
+	else 
+		PCPButtonFrame = CreateFrame("Button", "PCPButtonFrame", Minimap)
+
+		PCPButtonFrame:SetWidth(100)
+		PCPButtonFrame:SetHeight(100)
+
+		PCPButtonFrame:SetBackdrop({
+			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			tile = true, tileSize = 16, edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 }
+		})
+
+		PCPButtonFrame:SetBackdropColor(0, 0, 0, 0.5)
+		PCPButtonFrame:SetPoint("CENTER", Minimap, "CENTER", 0, 0)
+		
+	end
+    
+
+	PCPButtonFrame:SetWidth(32)
+	PCPButtonFrame:SetHeight(32)
+
+    PCPButtonFrame:SetPoint("TOP", Minimap, "TOP", 0, 0)  -- Position relative to the minimap
+    PCPButtonFrame:EnableMouse(true)
+    PCPButtonFrame:SetMovable(true)
+    PCPButtonFrame:SetUserPlaced(true)
+    PCPButtonFrame:RegisterForDrag("RightButton")  -- Allow dragging with the right mouse button
+    PCPButtonFrame:SetFrameStrata("LOW")
+    PCPButtonFrame:Show()
+
+    -- Set the icon/texture directly on the frame (since it now acts as a button)
+    PCPButtonFrame:SetNormalTexture("Interface\\AddOns\\PCP\\img\\SoloCraft")
+    PCPButtonFrame:SetPushedTexture("Interface\\AddOns\\PCP\\img\\SoloCraft")
+    PCPButtonFrame:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
+
+
+
+    -- Function to save and restore button position
+    local function SaveButtonPosition()
+        local point, relativeTo, relativePoint, xOffset, yOffset = PCPButtonFrame:GetPoint()
+        PCPButtonFrame.position = {point, relativeTo, relativePoint, xOffset, yOffset}
+    end
+
+    local function RestoreButtonPosition()
+        if PCPButtonFrame.position then
+            local point, relativeTo, relativePoint, xOffset, yOffset = unpack(PCPButtonFrame.position)
+            PCPButtonFrame:ClearAllPoints()
+            PCPButtonFrame:SetPoint(point, relativeTo, relativePoint, xOffset, yOffset)
+        end
+    end
+
+    -- Dragging behavior
+
+-- Set the frame scripts for dragging
+    if string.find(version, "^1.12") then
+		-- WoW 1.12.x (Vanilla) behavior
+		PCPButtonFrame:SetScript("OnDragStart", function()
+			this:StartMoving()
+		end)
+
+		PCPButtonFrame:SetScript("OnDragStop", function()
+			this:StopMovingOrSizing()
+			-- Save the new position after moving
+			SaveButtonPosition()
+		end)
+
+		-- OnClick behavior for WoW 1.12.x
+		PCPButtonFrame:SetScript("OnClick", function()
+			PCPButtonFrame_Toggle()  -- Toggle the visibility of PCPFrame
+		end)
+
+		-- Tooltip display for WoW 1.12.x
+		PCPButtonFrame:SetScript("OnEnter", function()
+			GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+			GameTooltip:SetText("PartyBot Control Panel \nPress Left Click to Open/Close \nHold Right Click to move the icon")
+			GameTooltip:Show()
+		end)
+
+		PCPButtonFrame:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+
+	else
+		-- WoW 1.14+ (Classic Era) behavior
+		PCPButtonFrame:SetScript("OnDragStart", function(self)
+			self:StartMoving()
+		end)
+
+		PCPButtonFrame:SetScript("OnDragStop", function(self)
+			self:StopMovingOrSizing()
+			-- Save the new position after moving
+			SaveButtonPosition()
+		end)
+
+		-- OnClick behavior for WoW 1.14+
+		PCPButtonFrame:SetScript("OnClick", function(self)
+			PCPButtonFrame_Toggle()  -- Toggle the visibility of PCPFrame
+		end)
+
+		-- Tooltip display for WoW 1.14+
+		PCPButtonFrame:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText("PartyBot Control Panel \nPress Left Click to Open/Close \nHold Right Click to move the icon")
+			GameTooltip:Show()
+		end)
+
+		PCPButtonFrame:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+	end
+
+
+    -- Restore saved position on load
+    RestoreButtonPosition()
+
+end
+
+-- Toggle frame visibility
+local PCPFrameShown = false  -- Start with PCPFrame hidden
+
+function PCPButtonFrame_Toggle()
+    if PCPFrameShown then
+        PCPFrame:Hide()
+    else
+        PCPFrame:Show()
+    end
+    PCPFrameShown = not PCPFrameShown
+end
+
+--------------------------------------------
+-- Create the PCPButtonFrame directly in Lua
+
+
+
+
+
 BINDING_HEADER_CCP = "PartyBot Control Panel";
 BINDING_NAME_CP = "Show/Hide PCP";
 
@@ -1137,71 +1268,6 @@ function OpenFrame()
 	PCPFrame:Show();
 end
 
--- minimap button 
-local PCPFrameShown = true -- show frame by default
-local PCPButtonPosition = 268
-
-function PCPButtonFrame_OnClick()
-	PCPButtonFrame_Toggle();
-end
-
-function PCPButtonFrame_Init()
-    -- show frame by default
-	if(PCPFrameShown) then
-		PCPFrame:Show();
-	else
-		PCPFrame:Hide();
-	end
-end
-
-function PCPButtonFrame_Toggle()
-	if(PCPFrame:IsVisible()) then
-		PCPFrame:Hide();
-		PCPFrameShown = false;
-	else
-		PCPFrame:Show();
-		PCPFrameShown = true;
-	end
-	PCPButtonFrame_Init();
-end
-
-function PCPButtonFrame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-    GameTooltip:SetText("PartyBot Control Panel \n Press Left Click to Open/Close \n Hold Right Click to move the icon");
-    GameTooltip:Show();
-end
-
-function PCPButtonFrame_UpdatePosition()
-	PCPButtonFrame:SetPoint(
-		"TOPLEFT",
-		"Minimap",
-		"TOPLEFT",
-		54 - (78 * cos(PCPButtonPosition)),
-		(78 * sin(PCPButtonPosition)) - 55
-	);
-	PCPButtonFrame_Init();
-end
-
--- Thanks to Yatlas for self code
-function PCPButtonFrame_BeingDragged()
-    -- Thanks to Gello for self code
-    local xpos,ypos = GetCursorPosition() 
-    local xmin,ymin = Minimap:GetLeft(), Minimap:GetBottom() 
-
-    xpos = xmin-xpos/UIParent:GetScale()+70 
-    ypos = ypos/UIParent:GetScale()-ymin-70 
-
-    PCPButtonFrame_SetPosition(math.deg(math.atan2(ypos,xpos)));
-end
-
-function PCPButtonFrame_SetPosition(v)
-    if(v < 0) then
-        v = v + 360;
-    end
-
-    PCPButtonPosition = v;
-    PCPButtonFrame_UpdatePosition();
-end
 
 SLASH_PCP1 = '/PCP'
 function SlashCmdList.PCP(msg, editbox) -- 4.

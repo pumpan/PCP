@@ -2,9 +2,10 @@
 ## Title: |cffeda55fPartyBot|r Control Panel
 ## Notes: PartyBot Control Panel for SoloCraft server.
 ## Notes-zhCN: PartyBot Control Panel for the SoloCraft server.
-## Author: Leontiesh (Edited by Solo for SoloCraft.org) (Buggs Fixed By Pumpan)
+## Author: Leontiesh (Edited by Solo for SoloCraft.org)
 ## DefaultState: Enabled
-## Version: 1.2.1
+## Version: 1.2.0
+## SavedVariables: PCPButtonPosition
 
 PCP.lua
 PCP.xml

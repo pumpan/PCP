@@ -2,77 +2,14 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
 
 	<Script file="PCP.lua" />
-	<Frame name="PCPButtonFrame" parent="Minimap" enableMouse="true" hidden="false" frameStrata="LOW">
-		<Size>
-			<AbsDimension x="32" y="32" />
-		</Size>
-		<Anchors>
-			<Anchor point="TOP" relativeTo="Minimap" relativePoint="TOP">
-				<Offset>
-					<AbsDimension x="0" y="0" />
-				</Offset>
-			</Anchor>
-		</Anchors>
-		<Frames>
-			<Button name="AtlasButton">
-				<Size>
-					<AbsDimension x="24" y="24" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOP" >
-						<Offset>
-							<AbsDimension x="0" y="0" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<NormalTexture file="Interface\AddOns\PCP\img\SoloCraft" />
-				<PushedTexture file="Interface\AddOns\PCP\img\SoloCraft" />
-				<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
-				<Scripts>
-					<OnLoad>
-						self:RegisterForDrag("RightButton");
-						self.dragme = false;
-					</OnLoad>
-					<OnDragStart>
-						self.dragme = true;
-					</OnDragStart>
-					<OnDragStop>
-						self.dragme = false;
-					</OnDragStop>
-					<OnUpdate>
-						if(self.dragme == true) then
-						PCPButtonFrame_BeingDragged();
-						end
-					</OnUpdate>
-					<OnClick>
-						PCPButtonFrame_OnClick(self);
-					</OnClick>
-					<OnEnter>
-						PCPButtonFrame_OnEnter(self);
-					</OnEnter>
-					<OnLeave>
-						GameTooltip:Hide();
-					</OnLeave>
-				</Scripts>
-			</Button>
-		</Frames>
-		<Scripts>
-			<OnLoad>
-				<!-- self:RegisterForDrag("RightButton"); -->
-			</OnLoad>
-			<OnEvent>
-				<!-- PCPButtonFrame_Init(); -->
-				<!-- PCPButtonFrame_UpdatePosition(); -->
-			</OnEvent>
-		</Scripts>
-	</Frame>
+
 	<Frame name="PCPFrame" parent="UIParent" toplevel="true" enableMouse="true" movable="true">
 
 		<Scripts>
-			<OnLoad>PCPFrame:RegisterForDrag("LeftButton");PCPFrame:Hide();self:RegisterEvent("PLAYER_LOGIN");</OnLoad>
-			<OnDragStart>PCPFrame:StartMoving();</OnDragStart>
-			<OnDragStop>PCPFrame:StopMovingOrSizing();</OnDragStop>
-			<OnEvent>JoinWorld();</OnEvent>
+			<!-- <OnLoad>PCPFrame:RegisterForDrag("LeftButton");PCPFrame:Hide();this:RegisterEvent("PLAYER_LOGIN");</OnLoad> -->
+			<OnLoad>
+				PCPFrame_OnLoad(self);
+			</OnLoad>
 		</Scripts>
 
 		<Size x="240" y="700" />
@@ -184,7 +121,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="version" inherits="GameFontHighlightSmallOutline" text="v1.3.1">
+				<FontString name="version" inherits="GameFontHighlightSmallOutline" text="v1.3.2">
 					<Size x="220" y="20" />
 					<Anchors>
 						<Anchor point="CENTER" relativePoint="BOTTOMRIGHT">
