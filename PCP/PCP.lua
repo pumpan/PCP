@@ -1,17 +1,6 @@
 local version, build, date, tocversion = GetBuildInfo()
 local isVanilla = string.find(version, "^1.12")
 
--- Function to handle button click
-function PCPButtonFrame_OnClick(self)
-    local frame = self or this  -- Use 'self' for 1.14+ or 'this' for 1.12.x
-    if isVanilla then
-        print("Button clicked in WoW 1.12.x")
-        -- Add WoW 1.12-specific code here
-    else
-        print("Button clicked in WoW 1.14+")
-        -- Add WoW 1.14-specific code here
-    end
-end
 
 -- Function to handle mouse enter event
 function PCPButtonFrame_OnEnter(self)
@@ -31,10 +20,14 @@ end
 
 -- Function to handle PLAYER_LOGIN event
 local function OnPlayerLogin(self, event)
-    -- Any specific setup you want to do on player login
-    print("Player logged in!")
+		local frame = self or this  -- Use 'self' for 1.14+ or 'this' for 1.12.x upcoming feature
+		if isVanilla then
+			print("Client:" .. version)
 
-    -- Example of showing the frame
+		else
+			print("Client:" .. version)
+		end
+
     PCPButtonFrame:Show()
 end
 
