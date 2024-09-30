@@ -38,6 +38,7 @@ function PCPFrame_OnLoad(self)
         self:SetScript("OnDragStop", function()
             self:StopMovingOrSizing()
         end)
+		PCPFrame:Hide()		
     end
 end
 
@@ -49,7 +50,7 @@ end
 ------------------------------------------------------------------------
 -- Create the PCPButtonFrame if it doesn't already exist
 if not PCPButtonFrame then
-    -- Create the PCPButtonFrame (it acts as both frame and button
+
     if string.find(version, "^1.14") then
 		PCPButtonFrame = CreateFrame("Button", "PCPButtonFrame", Minimap, "BackdropTemplate")	
 	else 
@@ -78,7 +79,7 @@ if not PCPButtonFrame then
     PCPButtonFrame:EnableMouse(true)
     PCPButtonFrame:SetMovable(true)
     PCPButtonFrame:SetUserPlaced(true)
-    PCPButtonFrame:RegisterForDrag("RightButton")  -- Allow dragging with the right mouse button
+    PCPButtonFrame:RegisterForDrag("RightButton")  
     PCPButtonFrame:SetFrameStrata("LOW")
     PCPButtonFrame:Show()
 
@@ -114,13 +115,12 @@ if not PCPButtonFrame then
 
 		PCPButtonFrame:SetScript("OnDragStop", function()
 			this:StopMovingOrSizing()
-			-- Save the new position after moving
 			SaveButtonPosition()
 		end)
 
 		-- OnClick behavior for WoW 1.12.x
 		PCPButtonFrame:SetScript("OnClick", function()
-			PCPButtonFrame_Toggle()  -- Toggle the visibility of PCPFrame
+			PCPButtonFrame_Toggle() 
 		end)
 
 		-- Tooltip display for WoW 1.12.x
@@ -142,16 +142,14 @@ if not PCPButtonFrame then
 
 		PCPButtonFrame:SetScript("OnDragStop", function(self)
 			self:StopMovingOrSizing()
-			-- Save the new position after moving
 			SaveButtonPosition()
 		end)
 
-		-- OnClick behavior for WoW 1.14+
 		PCPButtonFrame:SetScript("OnClick", function(self)
-			PCPButtonFrame_Toggle()  -- Toggle the visibility of PCPFrame
+			PCPButtonFrame_Toggle()  
 		end)
 
-		-- Tooltip display for WoW 1.14+
+
 		PCPButtonFrame:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText("PartyBot Control Panel \nPress Left Click to Open/Close \nHold Right Click to move the icon")
