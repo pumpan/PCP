@@ -16,6 +16,8 @@
 
 ### Changelog
 - 🛠 **Fixed:** An issue that could slow down the game for the wow 1.14 client by running unsupported code approximately 100 times per second.
+- This is solved: ![Problem that is solved](https://github.com/pumpan/PCP/blob/main/problemthatissolved.png)
 - 🐛 **Fixed:** Several minor code errors.
 - 🔄 **Version updated:** From `1.3` to `1.3.1`, indicating bug fixes.
+
 
